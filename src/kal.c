@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2010, Joshua Lackey
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     *  Redistributions of source code must retain the above copyright
  *        notice, this list of conditions and the following disclaimer.
  *
@@ -176,17 +176,6 @@ int main(int argc, char **argv) {
 				gain = strtof(optarg, 0) * 10;
 				break;
 
-			case 'F':
-				fpga_master_clock_freq = strtol(optarg, 0, 0);
-				if(!fpga_master_clock_freq)
-					fpga_master_clock_freq = (long int)strtod(optarg, 0); 
-
-				// was answer in MHz?
-				if(fpga_master_clock_freq < 1000) {
-					fpga_master_clock_freq *= 1000000;
-				}
-				break;
-
 			case 'e':
 				ppm_error = strtol(optarg, 0, 0);
 				break;
@@ -231,25 +220,15 @@ int main(int argc, char **argv) {
 			}
 			if((freq = arfcn_to_freq(chan, &bi)) < 869e6)
 				usage(argv[0]);
+		} else {
+			chan = freq_to_arfcn(freq, &bi);
 		}
 		if((freq < 869e6) || (2e9 < freq)) {
 			fprintf(stderr, "error: bad frequency: %lf\n", freq);
 			usage(argv[0]);
 		}
-		chan = freq_to_arfcn(freq, &bi);
 	}
 
-#if 0
-	// sanity check clock
-	if(fpga_master_clock_freq < 48000000) {
-		fprintf(stderr, "error: FPGA master clock too slow: %li\n", fpga_master_clock_freq);
-		usage(argv[0]);
-	}
-
-	// calculate decimation -- get as close to GSM rate as we can
-	fd = (double)fpga_master_clock_freq / GSM_RATE;
-	decimation = (unsigned int)fd;
-#endif
 	if(g_debug) {
 #ifdef D_HOST_OSX
 		printf("debug: Mac OS X version\n");
