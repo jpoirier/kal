@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2010, Joshua Lackey
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     *  Redistributions of source code must retain the above copyright
  *        notice, this list of conditions and the following disclaimer.
  *
@@ -24,6 +24,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef _ARDCN_FREQ_
+#define _ARDCN_FREQ_
 
 enum {
 	BI_NOT_DEFINED,
@@ -35,9 +37,11 @@ enum {
 	PCS_1900
 };
 
-const char *bi_to_str(int bi);
-int str_to_bi(char *s);
-double arfcn_to_freq(int n, int *bi = 0);
-int freq_to_arfcn(double freq, int *bi = 0);
-int first_chan(int bi);
-int next_chan(int chan, int bi);
+extern const char *bi_to_str(int bi);
+extern int str_to_bi(char *s);
+extern double arfcn_to_freq(int n, int *bi = 0);
+extern int freq_to_arfcn(double freq, int *bi = 0);
+extern int first_chan(int bi);
+extern int next_chan(int chan, int bi);
+
+#endif

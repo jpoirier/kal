@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2010, Joshua Lackey
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     *  Redistributions of source code must retain the above copyright
  *        notice, this list of conditions and the following disclaimer.
  *
@@ -24,7 +24,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef _UTIL_H
+#define _UTIL_H
 
-void display_freq(float f);
-void sort(float *b, unsigned int len);
-double avg(float *b, unsigned int len, float *stddev);
+extern void display_freq(float f);
+extern void sort(float *b, unsigned int len);
+extern double avg(float *b, unsigned int len, float *stddev);
+
+#endif
