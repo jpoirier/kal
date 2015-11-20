@@ -14,7 +14,7 @@ package kalibrate
 
 /*
 #cgo CFLAGS: -Isrc
-#cgo linux LDFLAGS: -L. -lkal -lm
+#cgo linux LDFLAGS: -lkal -lm
 #cgo darwin LDFLAGS: -lkal -lm
 #cgo windows LDFLAGS: -L. -lkal -LC:/WINDOWS/system32
 
