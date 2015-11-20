@@ -44,7 +44,6 @@ public:
 	int fill(unsigned int num_samples, unsigned int *overrun);
 	int tune(double freq);
 	int set_freq_correction(int ppm);
-	bool set_antenna(int antenna);
 	bool set_gain(float gain);
 	void start();
 	void stop();
@@ -60,7 +59,6 @@ public:
 	int			m_freq_corr;
 
 private:
-	void calculate_decimation();
 
 	rtlsdr_dev_t		*dev;
 

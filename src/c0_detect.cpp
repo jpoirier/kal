@@ -59,9 +59,9 @@ static double vectornorm2(const complex *v, const unsigned int len) {
 
 int c0_detect(usrp_source *u, int bi, double *Freq, double *Power) {
 	int i, chan_count;
-	unsigned int overruns, b_len, frames_len, found_count, notfound_count, r;
+	unsigned int overruns, b_len, frames_len, notfound_count, r;
 	float offset, spower[BUFSIZ];
-	double freq, sps, n, power[BUFSIZ], sum = 0, a;
+	double freq, sps, n, power[BUFSIZ], a;
 	complex *b;
 	circular_buffer *ub;
 
@@ -130,9 +130,7 @@ int c0_detect(usrp_source *u, int bi, double *Freq, double *Power) {
 
 	// then we look for fcch bursts
 	printf("%s:\n", bi_to_str(bi));
-	found_count = 0;
 	notfound_count = 0;
-	sum = 0;
 	i = first_chan(bi);
 	do {
 		if(power[i] <= a) {

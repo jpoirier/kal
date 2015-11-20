@@ -27,14 +27,16 @@
 #ifndef LIBKAL_H
 #define LIBKAL_H
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int kalibrate(void);
+void kalibrate(void);
 
 #ifdef __cplusplus
 }
 #endif
+
 
 #endif

@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2010, Joshua Lackey
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     *  Redistributions of source code must retain the above copyright
  *        notice, this list of conditions and the following disclaimer.
  *
@@ -47,7 +47,6 @@ inline double round(double x) { return floor(x + 0.5); }
 #endif
 
 usrp_source::usrp_source(float sample_rate, long int fpga_master_clock_freq) {
-
 	m_fpga_master_clock_freq = fpga_master_clock_freq;
 	m_desired_sample_rate = sample_rate;
 	m_sample_rate = 0.0;
@@ -60,7 +59,6 @@ usrp_source::usrp_source(float sample_rate, long int fpga_master_clock_freq) {
 
 
 usrp_source::usrp_source(unsigned int decimation, long int fpga_master_clock_freq) {
-
 	m_fpga_master_clock_freq = fpga_master_clock_freq;
 	m_sample_rate = 0.0;
 	m_cb = new circular_buffer(CB_LEN, sizeof(complex), 0);
@@ -75,53 +73,29 @@ usrp_source::usrp_source(unsigned int decimation, long int fpga_master_clock_fre
 		m_decimation = 256;
 }
 
-
 usrp_source::~usrp_source() {
-
 	stop();
 	delete m_cb;
 	rtlsdr_close(dev);
 	pthread_mutex_destroy(&m_u_mutex);
 }
 
-
 void usrp_source::stop() {
-
 	pthread_mutex_lock(&m_u_mutex);
 	pthread_mutex_unlock(&m_u_mutex);
 }
 
 
 void usrp_source::start() {
-
 	pthread_mutex_lock(&m_u_mutex);
 	pthread_mutex_unlock(&m_u_mutex);
 }
 
-
-void usrp_source::calculate_decimation() {
-
-	float decimation_f;
-
-//	decimation_f = (float)m_u_rx->fpga_master_clock_freq() / m_desired_sample_rate;
-	m_decimation = (unsigned int)round(decimation_f) & ~1;
-
-	if(m_decimation < 4)
-		m_decimation = 4;
-	if(m_decimation > 256)
-		m_decimation = 256;
-}
-
-
 float usrp_source::sample_rate() {
-
 	return m_sample_rate;
-
 }
-
 
 int usrp_source::tune(double freq) {
-
 	int r = 0;
 
 	pthread_mutex_lock(&m_u_mutex);
@@ -144,11 +118,6 @@ int usrp_source::set_freq_correction(int ppm) {
 	return rtlsdr_set_freq_correction(dev, ppm);
 }
 
-bool usrp_source::set_antenna(int antenna) {
-
-	return 0;
-}
-
 bool usrp_source::set_gain(float gain) {
 	int r, g = gain * 10;
 
@@ -168,7 +137,7 @@ bool usrp_source::set_gain(float gain) {
  * open() should be called before multiple threads access usrp_source.
  */
 int usrp_source::open(unsigned int subdev) {
-	int i, r, device_count, count;
+	int i, r, device_count;
 	uint32_t dev_index = subdev;
 	uint32_t samp_rate = 270833;
 
@@ -212,19 +181,16 @@ int usrp_source::open(unsigned int subdev) {
 	return 0;
 }
 
-#define USB_PACKET_SIZE		(2 * 16384)
-#define FLUSH_SIZE		512
-
+#define USB_PACKET_SIZE	(2 * 16384)
+#define FLUSH_SIZE		(512)
 
 int usrp_source::fill(unsigned int num_samples, unsigned int *overrun_i) {
-
 	unsigned char ubuf[USB_PACKET_SIZE];
 	unsigned int i, j, space, overruns = 0;
 	complex *c;
 	int n_read;
 
 	while((m_cb->data_available() < num_samples) && (m_cb->space_available() > 0)) {
-
 		// read one usb packet from the usrp
 		pthread_mutex_lock(&m_u_mutex);
 
@@ -262,10 +228,7 @@ int usrp_source::fill(unsigned int num_samples, unsigned int *overrun_i) {
 	return 0;
 }
 
-
-int usrp_source::read(complex *buf, unsigned int num_samples,
-   unsigned int *samples_read) {
-
+int usrp_source::read(complex *buf, unsigned int num_samples, unsigned int *samples_read) {
 	unsigned int n;
 
 	if(fill(num_samples, 0))
@@ -279,18 +242,14 @@ int usrp_source::read(complex *buf, unsigned int num_samples,
 	return 0;
 }
 
-
 /*
  * Don't hold a lock on this and use the usrp at the same time.
  */
 circular_buffer *usrp_source::get_buffer() {
-
 	return m_cb;
 }
 
-
 int usrp_source::flush(unsigned int flush_count) {
-
 	m_cb->flush();
 	fill(flush_count * FLUSH_SIZE, 0);
 	m_cb->flush();

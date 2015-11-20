@@ -26,6 +26,7 @@
  */
 #include <rtl-sdr.h>
 #include "kal.h"
+#include "libkal.h"
 
 #define FREQ_CNT (6)
 
@@ -35,7 +36,6 @@ static int const freqs[FREQ_CNT] = {GSM_850, GSM_900, GSM_R_900, GSM_E_900, DCS_
 void kalibrate(void) {
 	int i;
 	int cnt;
-	int bi;
 	int err = -1;
 	int hz_adjust = 0;
 	unsigned int const decimation = 192;

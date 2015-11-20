@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 	unsigned int subdev = 0, decimation = 192;
 	long int fpga_master_clock_freq = 52000000;
 	float gain = 0;
-	double freq = -1.0, fd;
+	double freq = -1.0;
 	usrp_source *u;
 
 	while((c = getopt(argc, argv, "f:c:s:b:R:A:g:e:E:d:vDh?")) != EOF) {
@@ -214,7 +214,7 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "error: usrp_source::open\n");
 		return -1;
 	}
-//	u->set_antenna(antenna);
+
 	if (gain != 0) {
 		if(!u->set_gain(gain)) {
 			fprintf(stderr, "error: usrp_source::set_gain\n");

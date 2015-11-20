@@ -13,14 +13,14 @@
 package kalibrate
 
 /*
-#cgo linux LDFLAGS: -lkalibrate -lm
-#cgo darwin LDFLAGS: -lkalibrate -lm
-#cgo windows CFLAGS: -IC:/WINDOWS/system32
-#cgo windows LDFLAGS: -L. -lkalibrate -LC:/WINDOWS/system32
+#cgo CFLAGS: -Isrc
+#cgo linux LDFLAGS: -L. -lkal -lm
+#cgo darwin LDFLAGS: -lkal -lm
+#cgo windows LDFLAGS: -L. -lkal -LC:/WINDOWS/system32
 
 #include <stdlib.h>
 #include <stdint.h>
-#include "../src/libkal.h"
+#include "libkal.h"
 */
 import "C"
 
