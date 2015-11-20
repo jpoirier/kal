@@ -40,7 +40,7 @@ extern int g_verbosity;
 static const float ERROR_DETECT_OFFSET_MAX = 40e3;
 
 #define GSM_RATE (1625000.0 / 6.0)
-#define  NOTFOUND_MAX (10)
+#define NOTFOUND_MAX (10)
 
 #ifdef _WIN32
 #define BUFSIZ (1024)
@@ -71,7 +71,7 @@ int c0_detect(usrp_source *u, int bi, double *Freq, double *Power) {
 	fcch_detector *l = new fcch_detector(u->sample_rate());
 
 	if(bi == BI_NOT_DEFINED) {
-		FPRINTF(stderr, "error: c0_detect: band not defined\n");
+		fprintf(stderr, "error: c0_detect: band not defined\n");
 		return -1;
 	}
 
@@ -81,21 +81,21 @@ int c0_detect(usrp_source *u, int bi, double *Freq, double *Power) {
 
 	// first, we calculate the power in each channel
 	if(g_verbosity > 2) {
-		FPRINTF(stderr, "calculate power in each channel:\n");
+		fprintf(stderr, "calculate power in each channel:\n");
 	}
 	u->start();
 	u->flush();
 	for(i = first_chan(bi); i >= 0; i = next_chan(i, bi)) {
 		freq = arfcn_to_freq(i, &bi);
 		if(!u->tune(freq)) {
-			FPRINTF(stderr, "error: usrp_source::tune\n");
+			fprintf(stderr, "error: usrp_source::tune\n");
 			return -1;
 		}
 
 		do {
 			u->flush();
 			if(u->fill(frames_len, &overruns)) {
-				FPRINTF(stderr, "error: usrp_source::fill\n");
+				fprintf(stderr, "error: usrp_source::fill\n");
 				return -1;
 			}
 		} while(overruns);
@@ -104,7 +104,7 @@ int c0_detect(usrp_source *u, int bi, double *Freq, double *Power) {
 		n = sqrt(vectornorm2(b, frames_len));
 		power[i] = n;
 		if(g_verbosity > 2) {
-			FPRINTF(stderr, "\tchan %d (%.1fMHz):\tpower: %lf\n", i, freq/1e6, n);
+			fprintf(stderr, "\tchan %d (%.1fMHz):\tpower: %lf\n", i, freq/1e6, n);
 		}
 	}
 
@@ -125,11 +125,11 @@ int c0_detect(usrp_source *u, int bi, double *Freq, double *Power) {
 	a = avg(spower, chan_count - 4 * chan_count / 10, 0);
 
 	if(g_verbosity > 0) {
-		FPRINTF(stderr, "channel detect threshold: %lf\n", a);
+		fprintf(stderr, "channel detect threshold: %lf\n", a);
 	}
 
 	// then we look for fcch bursts
-	PRINTF("%s:\n", bi_to_str(bi));
+	printf("%s:\n", bi_to_str(bi));
 	found_count = 0;
 	notfound_count = 0;
 	sum = 0;
@@ -142,14 +142,14 @@ int c0_detect(usrp_source *u, int bi, double *Freq, double *Power) {
 
 		freq = arfcn_to_freq(i, &bi);
 		if(!u->tune(freq)) {
-			FPRINTF(stderr, "error: usrp_source::tune\n");
+			fprintf(stderr, "error: usrp_source::tune\n");
 			return -1;
 		}
 
 		do {
 			u->flush();
 			if(u->fill(frames_len, &overruns)) {
-				FPRINTF(stderr, "error: usrp_source::fill\n");
+				fprintf(stderr, "error: usrp_source::fill\n");
 				return -1;
 			}
 		} while(overruns);
@@ -158,9 +158,9 @@ int c0_detect(usrp_source *u, int bi, double *Freq, double *Power) {
 		r = l->scan(b, b_len, &offset, 0);
 		if(r && (fabsf(offset - GSM_RATE / 4) < ERROR_DETECT_OFFSET_MAX)) {
 			// found
-			PRINTF("\tchan: %d (%.1fMHz ", i, freq/1e6);
+			printf("\tchan: %d (%.1fMHz ", i, freq/1e6);
 			display_freq(offset - GSM_RATE / 4);
-			PRINTF(")\tpower: %6.2lf\n", power[i]);
+			printf(")\tpower: %6.2lf\n", power[i]);
 			notfound_count = 0;
 			i = next_chan(i, bi);
 

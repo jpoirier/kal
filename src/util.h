@@ -33,8 +33,6 @@
 // #undef	NFPRINTF
 #define	NFPRINTF
 
-
-
 // __func__ (C99) : The function where the printf is called
 // __LINE__ : The line where the printf is called
 // __FILE__ : The file where the printf is called
