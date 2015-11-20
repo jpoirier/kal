@@ -36,42 +36,7 @@
  *	2.  Identifies the frequency of all GSM base stations in a given band.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#else
-#define PACKAGE_VERSION "custom build"
-#endif /* HAVE_CONFIG_H */
-
-#include <stdio.h>
-#include <stdlib.h>
-#ifndef _WIN32
-#include <unistd.h>
-#include <sys/time.h>
-#endif
-#ifdef D_HOST_OSX
-#include <libgen.h>
-#endif /* D_HOST_OSX */
-#include <string.h>
-
-#include <errno.h>
-
-#include "usrp_source.h"
-#include "fcch_detector.h"
-#include "arfcn_freq.h"
-#include "offset.h"
-#include "c0_detect.h"
-#include "version.h"
-#ifdef _WIN32
-#include <getopt.h>
-#define basename(x) "meh"
-#define strtof strtod
-#endif
-
-#define GSM_RATE (1625000.0 / 6.0)
-
-
-int g_verbosity = 0;
-int g_debug = 0;
+#include "kal.h"
 
 void usage(char *prog) {
 
@@ -283,7 +248,7 @@ int main(int argc, char **argv) {
 	}
 
 	fprintf(stderr, "%s: Scanning for %s base stations.\n",
-	   basename(argv[0]), bi_to_str(bi));
+	   	basename(argv[0]), bi_to_str(bi));
 
-	return c0_detect(u, bi);
+	return c0_detect(u, bi, NULL, NULL);
 }

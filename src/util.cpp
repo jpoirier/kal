@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2010, Joshua Lackey
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     *  Redistributions of source code must retain the above copyright
  *        notice, this list of conditions and the following disclaimer.
  *
@@ -64,7 +64,6 @@ void display_freq(float f) {
 
 
 void sort(float *b, unsigned int len) {
-
 	for(unsigned int i = 0; i < len; i++) {
 		for(unsigned int j = i + 1; j < len; j++) {
 			if(b[j] < b[i]) {
@@ -78,13 +77,13 @@ void sort(float *b, unsigned int len) {
 
 
 double avg(float *b, unsigned int len, float *stddev) {
-
 	unsigned int i;
 	double t = 0.0, a = 0.0, s = 0.0;
 
 	for(i = 0; i < len; i++)
 		t += b[i];
 	a = t / len;
+
 	if(stddev) {
 		for(i = 0; i < len; i++)
 			s += (b[i] - a) * (b[i] - a);

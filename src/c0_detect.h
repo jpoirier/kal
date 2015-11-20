@@ -27,6 +27,6 @@
 #ifndef _C0_DETECT_
 #define _C0_DETECT_
 
-extern int c0_detect(usrp_source *u, int bi);
+extern int c0_detect(usrp_source *u, int bi, double *Freq, double *Power);
 
 #endif

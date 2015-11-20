@@ -27,6 +27,31 @@
 #ifndef _UTIL_H
 #define _UTIL_H
 
+// #undef	NPRINTF
+#define	NPRINTF
+
+// #undef	NFPRINTF
+#define	NFPRINTF
+
+
+
+// __func__ (C99) : The function where the printf is called
+// __LINE__ : The line where the printf is called
+// __FILE__ : The file where the printf is called
+
+// Standard printf
+#ifdef NPRINTF
+    #define PRINTF(fmt, ...)
+#else
+    #define PRINTF(fmt, ...) printf(fmt, __VA_ARGS__)
+#endif
+
+#ifdef NFPRINTF
+    #define FPRINTF(fd, fmt, ...)
+#else
+    #define FPRINTF(fd, fmt, ...) fprintf(fd, fmt, __VA_ARGS__)
+#endif
+
 extern void display_freq(float f);
 extern void sort(float *b, unsigned int len);
 extern double avg(float *b, unsigned int len, float *stddev);

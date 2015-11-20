@@ -1,6 +1,6 @@
 AC_PREREQ([2.64])
 AC_INIT([kalibrate], [0.4.1], [jl@thre.at], [kal])
-AC_CONFIG_SRCDIR([src/fcch_detector.cc])
+AC_CONFIG_SRCDIR([src/fcch_detector.cpp])
 AM_INIT_AUTOMAKE([-Wall -Werror])
 AC_CONFIG_HEADERS([config.h])
 

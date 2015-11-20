@@ -1,14 +1,14 @@
 bin_PROGRAMS = kal
 
 kal_SOURCES = \
-   arfcn_freq.c \
-   c0_detect.c	 \
-   circular_buffer.c \
-   fcch_detector.c \
-   kal.c \
-   offset.c \
-   usrp_source.c \
-   util.c \
+   arfcn_freq.cpp \
+   c0_detect.cpp	 \
+   circular_buffer.cpp \
+   fcch_detector.cpp \
+   kal.cpp \
+   offset.cpp \
+   usrp_source.cpp \
+   util.cpp \
    arfcn_freq.h \
    c0_detect.h \
    circular_buffer.h \

@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2010, Joshua Lackey
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     *  Redistributions of source code must retain the above copyright
  *        notice, this list of conditions and the following disclaimer.
  *
@@ -29,6 +29,8 @@
 #include "fcch_detector.h"
 #include "util.h"
 
+#define GSM_RATE (1625000.0 / 6.0)
+
 #ifdef _WIN32
 inline double round(double x) { return floor(x + 0.5); }
 #endif
@@ -41,9 +43,6 @@ extern int g_verbosity;
 
 
 int offset_detect(usrp_source *u, int hz_adjust, float tuner_error) {
-
-#define GSM_RATE (1625000.0 / 6.0)
-
 	unsigned int new_overruns = 0, overruns = 0;
 	int notfound = 0;
 	unsigned int s_len, b_len, consumed, count;
