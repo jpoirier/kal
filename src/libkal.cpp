@@ -32,7 +32,7 @@
 static int const freqs[FREQ_CNT] = {GSM_850, GSM_900, GSM_R_900, GSM_E_900, DCS_1800, PCS_1900};
 
 
-int kalibrate(void) {
+void kalibrate(void) {
 	int i;
 	int cnt;
 	int bi;
