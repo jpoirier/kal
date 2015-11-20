@@ -2,15 +2,13 @@
 // Distributable under the terms of The New BSD License
 // that can be found in the LICENSE file.
 
-// Package kalibrate wraps libkalibrate
+// Package kalibrate wraps libkalibrate.
 //
 // Build example
 //
-// dump978 go wrapper:
+// kalibrate go wrapper:
 //   $ go build -o kalibrate.a kalibrate.go
 //
-// uat_read executable:
-//   $ go build uat_read.go
 
 package kalibrate
 
