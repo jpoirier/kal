@@ -30,7 +30,7 @@
 #include "arfcn_enums.h"
 
 
-int kal(rtlsdr_dev_t *dev, int arfcn) {
+int kal(rtlsdr_dev_t *dev, double *ppm, int arfcn) {
 	if (!dev)
 		return -1;
 	if (arfcn < GSM_850 || arfcn > PCS_1900)
@@ -50,6 +50,8 @@ int kal(rtlsdr_dev_t *dev, int arfcn) {
 		return -3;
 	}
 
+	double freq_saved = rtlsdr_get_center_freq(dev);
+
 	err = c0_detect(u, arfcn, &freq, &power);
 	if (err != 0 && freq == 0.0)
 		return -4;
@@ -65,13 +67,15 @@ int kal(rtlsdr_dev_t *dev, int arfcn) {
 	}
 
 	double tuner_error = u->m_center_freq - freq;
-	err = offset_detect(u, hz_adjust, tuner_error);
+	err = offset_detect(u, ppm, hz_adjust, tuner_error);
 	if (err != 0) {
 		fprintf(stderr, "error: offset_detect\n");
 		return -7;
 	}
 
-	// TODO: reset devices previous settings
+	rtlsdr_set_freq_correction(dev, ppm);
+	rtlsdr_set_center_freq(dev, freq_saved);
+
 	return 0;
 }
 
@@ -119,7 +123,8 @@ void kal_world(void) {
 		}
 
 		double tuner_error = u->m_center_freq - freq;
-		err = offset_detect(u, hz_adjust, tuner_error);
+		double ppm;
+		err = offset_detect(u, &ppm, hz_adjust, tuner_error);
 		if (err != 0)
 			fprintf(stderr, "error: offset_detect\n");
 	}

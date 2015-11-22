@@ -42,7 +42,7 @@ static const float		OFFSET_MAX	= 40e3;
 extern int g_verbosity;
 
 
-int offset_detect(usrp_source *u, int hz_adjust, float tuner_error) {
+int offset_detect(usrp_source *u, double *ppm, int hz_adjust, float tuner_error) {
 	unsigned int new_overruns = 0, overruns = 0;
 	int notfound = 0;
 	unsigned int s_len, b_len, consumed, count;
@@ -67,7 +67,6 @@ int offset_detect(usrp_source *u, int hz_adjust, float tuner_error) {
 	u->flush();
 	count = 0;
 	while(count < AVG_COUNT) {
-
 		// ensure at least s_len contiguous samples are read from usrp
 		do {
 			if(u->fill(s_len, &new_overruns)) {
@@ -122,7 +121,7 @@ int offset_detect(usrp_source *u, int hz_adjust, float tuner_error) {
 	printf("not found: %u\n", notfound);
 
 	total_ppm = u->m_freq_corr - ((avg_offset + hz_adjust) / u->m_center_freq) * 1000000;
-
+	*ppm = total_ppm;
 	printf("average absolute error: %.3f ppm\n", total_ppm);
 	return 0;
 }

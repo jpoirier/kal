@@ -32,6 +32,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 typedef struct rtlsdr_dev rtlsdr_dev_t;
 int kal(rtlsdr_dev_t *dev, int arfcn);
 void kal_world(void);
