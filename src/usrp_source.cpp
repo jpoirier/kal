@@ -53,6 +53,7 @@ usrp_source::usrp_source(float sample_rate, long int fpga_master_clock_freq) {
 	m_decimation = 0;
 	m_cb = new circular_buffer(CB_LEN, sizeof(complex), 0);
 	m_freq_corr = 0;
+	m_close = true;
 
 	pthread_mutex_init(&m_u_mutex, 0);
 }
@@ -63,6 +64,55 @@ usrp_source::usrp_source(unsigned int decimation, long int fpga_master_clock_fre
 	m_sample_rate = 0.0;
 	m_cb = new circular_buffer(CB_LEN, sizeof(complex), 0);
 	m_freq_corr = 0;
+	m_close = true;
+
+	pthread_mutex_init(&m_u_mutex, 0);
+
+	m_decimation = decimation & ~1;
+	if(m_decimation < 4)
+		m_decimation = 4;
+	if(m_decimation > 256)
+		m_decimation = 256;
+}
+
+usrp_source::usrp_source(rtlsdr_dev_t *dev, float sample_rate, long int fpga_master_clock_freq) {
+	m_dev = dev;
+	m_fpga_master_clock_freq = fpga_master_clock_freq;
+	m_desired_sample_rate = sample_rate;
+	m_sample_rate = 0.0;
+	m_decimation = 0;
+	m_cb = new circular_buffer(CB_LEN, sizeof(complex), 0);
+	m_freq_corr = 0;
+	m_close = false;
+
+	pthread_mutex_init(&m_u_mutex, 0);
+
+	uint32_t samp_rate = 270833;
+	m_sample_rate = 270833.002142;
+
+	// TODO: call rtlsdr_get_usb_strings and print out info
+
+	// fprintf(stderr, "usrp_source::init using device %d: %s\n",
+	// 	dev_index,
+	// 	rtlsdr_get_device_name(dev_index));
+
+	/* Set the sample rate */
+	if (rtlsdr_set_sample_rate(m_dev, samp_rate) < 0)
+		fprintf(stderr, "WARNING: Failed to set sample rate.\n");
+
+	/* Reset endpoint before we start reading from it (mandatory) */
+	if (rtlsdr_reset_buffer(m_dev) < 0)
+		fprintf(stderr, "WARNING: Failed to reset buffers.\n");
+}
+
+
+usrp_source::usrp_source(rtlsdr_dev_t *dev, unsigned int decimation, long int fpga_master_clock_freq) {
+	m_dev = dev;
+	m_fpga_master_clock_freq = fpga_master_clock_freq;
+	m_sample_rate = 0.0;
+	m_cb = new circular_buffer(CB_LEN, sizeof(complex), 0);
+	m_freq_corr = 0;
+	m_close = false;
 
 	pthread_mutex_init(&m_u_mutex, 0);
 
@@ -76,7 +126,8 @@ usrp_source::usrp_source(unsigned int decimation, long int fpga_master_clock_fre
 usrp_source::~usrp_source() {
 	stop();
 	delete m_cb;
-	rtlsdr_close(dev);
+	if(m_close)
+		rtlsdr_close(m_dev);
 	pthread_mutex_destroy(&m_u_mutex);
 }
 
@@ -100,12 +151,12 @@ int usrp_source::tune(double freq) {
 
 	pthread_mutex_lock(&m_u_mutex);
 	if (freq != m_center_freq) {
-		r = rtlsdr_set_center_freq(dev, (uint32_t)freq);
+		r = rtlsdr_set_center_freq(m_dev, (uint32_t)freq);
 
 		if (r < 0)
 			fprintf(stderr, "Tuning to %u Hz failed!\n", (uint32_t)freq);
 		else
-			m_center_freq = rtlsdr_get_center_freq(dev);
+			m_center_freq = rtlsdr_get_center_freq(m_dev);
 	}
 
 	pthread_mutex_unlock(&m_u_mutex);
@@ -115,19 +166,19 @@ int usrp_source::tune(double freq) {
 
 int usrp_source::set_freq_correction(int ppm) {
 	m_freq_corr = ppm;
-	return rtlsdr_set_freq_correction(dev, ppm);
+	return rtlsdr_set_freq_correction(m_dev, ppm);
 }
 
 bool usrp_source::set_gain(float gain) {
 	int r, g = gain * 10;
 
 	/* Enable manual gain */
-	r = rtlsdr_set_tuner_gain_mode(dev, 1);
+	r = rtlsdr_set_tuner_gain_mode(m_dev, 1);
 	if (r < 0)
 		fprintf(stderr, "WARNING: Failed to enable manual gain.\n");
 
 	fprintf(stderr, "Setting gain: %.1f dB\n", gain/10);
-	r = rtlsdr_set_tuner_gain(dev, g);
+	r = rtlsdr_set_tuner_gain(m_dev, g);
 
 	return (r < 0) ? 0 : 1;
 }
@@ -158,23 +209,23 @@ int usrp_source::open(unsigned int subdev) {
 		dev_index,
 		rtlsdr_get_device_name(dev_index));
 
-	r = rtlsdr_open(&dev, dev_index);
+	r = rtlsdr_open(&m_dev, dev_index);
 	if (r < 0) {
 		fprintf(stderr, "Failed to open rtlsdr device #%d.\n", dev_index);
 		exit(1);
 	}
 
 	/* Set the sample rate */
-	r = rtlsdr_set_sample_rate(dev, samp_rate);
+	r = rtlsdr_set_sample_rate(m_dev, samp_rate);
 	if (r < 0)
 		fprintf(stderr, "WARNING: Failed to set sample rate.\n");
 
 	/* Reset endpoint before we start reading from it (mandatory) */
-	r = rtlsdr_reset_buffer(dev);
+	r = rtlsdr_reset_buffer(m_dev);
 	if (r < 0)
 		fprintf(stderr, "WARNING: Failed to reset buffers.\n");
 
-//	r = rtlsdr_set_offset_tuning(dev, 1);
+//	r = rtlsdr_set_offset_tuning(m_dev, 1);
 //	if (r < 0)
 //		fprintf(stderr, "WARNING: Failed to enable offset tuning\n");
 
@@ -194,7 +245,7 @@ int usrp_source::fill(unsigned int num_samples, unsigned int *overrun_i) {
 		// read one usb packet from the usrp
 		pthread_mutex_lock(&m_u_mutex);
 
-		if (rtlsdr_read_sync(dev, ubuf, sizeof(ubuf), &n_read) < 0) {
+		if (rtlsdr_read_sync(m_dev, ubuf, sizeof(ubuf), &n_read) < 0) {
 			pthread_mutex_unlock(&m_u_mutex);
 			fprintf(stderr, "error: usrp_standard_rx::read\n");
 			return -1;

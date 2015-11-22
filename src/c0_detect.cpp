@@ -32,6 +32,7 @@
 #include "usrp_source.h"
 #include "circular_buffer.h"
 #include "fcch_detector.h"
+#include "arfcn_enums.h"
 #include "arfcn_freq.h"
 #include "util.h"
 

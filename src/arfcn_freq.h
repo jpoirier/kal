@@ -27,16 +27,6 @@
 #ifndef _ARDCN_FREQ_
 #define _ARDCN_FREQ_
 
-enum {
-	BI_NOT_DEFINED,
-	GSM_850,
-	GSM_R_900,
-	GSM_900,
-	GSM_E_900,
-	DCS_1800,
-	PCS_1900
-};
-
 extern const char *bi_to_str(int bi);
 extern int str_to_bi(char *s);
 extern double arfcn_to_freq(int n, int *bi);

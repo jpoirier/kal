@@ -37,6 +37,8 @@ class usrp_source {
 public:
 	usrp_source(float sample_rate, long int fpga_master_clock_freq = 52000000);
 	usrp_source(unsigned int decimation, long int fpga_master_clock_freq = 52000000);
+	usrp_source(rtlsdr_dev_t *dev, float sample_rate, long int fpga_master_clock_freq = 52000000);
+	usrp_source(rtlsdr_dev_t *dev, unsigned int decimation, long int fpga_master_clock_freq = 52000000);
 	~usrp_source();
 
 	int open(unsigned int subdev);
@@ -52,39 +54,30 @@ public:
 
 	float sample_rate();
 
-	static const unsigned int side_A = 0;
-	static const unsigned int side_B = 1;
-
-	double			m_center_freq;
-	int			m_freq_corr;
+	double	m_center_freq;
+	int		m_freq_corr;
 
 private:
-
-	rtlsdr_dev_t		*dev;
-
-	float			m_sample_rate;
-	float			m_desired_sample_rate;
+	bool				m_close;
+	rtlsdr_dev_t		*m_dev;
+	float				m_sample_rate;
+	float				m_desired_sample_rate;
 	unsigned int		m_decimation;
-
-	long int		m_fpga_master_clock_freq;
-
+	long int			m_fpga_master_clock_freq;
 	circular_buffer *	m_cb;
 
 	/*
 	 * This mutex protects access to the USRP and daughterboards but not
 	 * necessarily to any fields in this class.
 	 */
-	pthread_mutex_t		m_u_mutex;
+	pthread_mutex_t				m_u_mutex;
 
-	static const unsigned int	FLUSH_COUNT	= 10;
-	static const unsigned int	CB_LEN		= (16 * 16384);
-	static const int		NCHAN		= 1;
-	static const int		INITIAL_MUX	= -1;
-	static const int		FUSB_BLOCK_SIZE	= 1024;
-	static const int		FUSB_NBLOCKS	= 16 * 8;
-	static const char *		FPGA_FILENAME() {
-		return "std_2rxhb_2tx.rbf";
-	}
+	static const unsigned int	FLUSH_COUNT		= 10;
+	static const unsigned int	CB_LEN			= (16 * 16384);
+	static const int			NCHAN			= 1;
+	static const int			INITIAL_MUX		= -1;
+	static const int			FUSB_BLOCK_SIZE	= 1024;
+	static const int			FUSB_NBLOCKS	= 16 * 8;
 };
 
 #endif

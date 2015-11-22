@@ -27,12 +27,14 @@
 #ifndef LIBKAL_H
 #define LIBKAL_H
 
+#include "arfcn_enums.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-void kalibrate(void);
+typedef struct rtlsdr_dev rtlsdr_dev_t;
+int kal(rtlsdr_dev_t *dev, int arfcn);
+void kal_world(void);
 
 #ifdef __cplusplus
 }

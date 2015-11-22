@@ -31,6 +31,7 @@
 #include <unistd.h>
 #endif
 #include <string.h>
+#include "arfcn_enums.h"
 #include "arfcn_freq.h"
 
 

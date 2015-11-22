@@ -48,6 +48,7 @@
 
 #include "usrp_source.h"
 #include "fcch_detector.h"
+#include "arfcn_enums.h"
 #include "arfcn_freq.h"
 #include "offset.h"
 #include "c0_detect.h"
