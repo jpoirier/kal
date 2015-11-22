@@ -28,8 +28,6 @@
 #include "kal.h"
 #include "libkal.h"
 #include "arfcn_enums.h"
-#include "rtlsdr_source.h"
-
 
 
 int kal(rtlsdr_dev_t *dev, int arfcn) {
