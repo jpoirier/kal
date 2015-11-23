@@ -51,7 +51,7 @@ const (
 	errOffsetDetect
 	errSetFreqCorr
 	errSetCenterFreq
-	errOther = -99
+	errUnknown = -99
 )
 
 var errMap = map[int]error{
@@ -59,13 +59,13 @@ var errMap = map[int]error{
 	errNoDevice:      errors.New("no device"),
 	errARFCN:         errors.New("arfcn out of range [GSM_850-PCS_1900]"),
 	errUSRPSource:    errors.New("usrp_source"),
-	errC0detect:      errors.New("c0_detect error"),
-	errBadFreq:       errors.New("bad frequency"),
-	errTune:          errors.New("tuning error"),
-	errOffsetDetect:  errors.New("offset_detect error"),
-	errSetFreqCorr:   errors.New("set_freq_correction error"),
-	errSetCenterFreq: errors.New("set_center_freq error"),
-	errOther:         errors.New("unknown error"),
+	errC0detect:      errors.New("c0_detect"),
+	errBadFreq:       errors.New("arfcn_to_freq"),
+	errTune:          errors.New("tuning"),
+	errOffsetDetect:  errors.New("offset_detect"),
+	errSetFreqCorr:   errors.New("set_freq_correction"),
+	errSetCenterFreq: errors.New("set_center_freq"),
+	errUnknown:       errors.New("unknown"),
 }
 
 // Context is the opened device's context.
@@ -83,8 +83,4 @@ func Kal(dev *Context, arfcn int) (ppm int, err error) {
 	i := C.kal((*C.rtlsdr_dev_t)(dev), (*C.int)(unsafe.Pointer(&ppm)), C.int(arfcn))
 	err = getError(int(i))
 	return
-}
-
-func KalWorld() {
-	C.kal_world()
 }

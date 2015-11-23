@@ -39,7 +39,6 @@
 #include "kal.h"
 
 void usage(char *prog) {
-
 	printf("kalibrate v%s-rtl, Copyright (c) 2010, Joshua Lackey\n", kal_version_string);
 	printf("modified for use with rtl-sdr devices, Copyright (c) 2012, Steve Markgraf");
 	printf("\nUsage:\n");
@@ -66,7 +65,6 @@ void usage(char *prog) {
 
 
 int main(int argc, char **argv) {
-
 	char *endptr;
 	int c, antenna = 1, bi = BI_NOT_DEFINED, chan = -1, bts_scan = 0;
 	int ppm_error = 0, hz_adjust = 0;
@@ -76,8 +74,8 @@ int main(int argc, char **argv) {
 	double freq = -1.0;
 	usrp_source *u;
 
-	while((c = getopt(argc, argv, "f:c:s:b:R:A:g:e:E:d:vDh?")) != EOF) {
-		switch(c) {
+	while ((c = getopt(argc, argv, "f:c:s:b:R:A:g:e:E:d:vDh?")) != EOF) {
+		switch (c) {
 			case 'f':
 				freq = strtod(optarg, 0);
 				break;
@@ -87,7 +85,7 @@ int main(int argc, char **argv) {
 				break;
 
 			case 's':
-				if((bi = str_to_bi(optarg)) == -1) {
+				if ((bi = str_to_bi(optarg)) == -1) {
 					fprintf(stderr, "error: bad band "
 					   "indicator: ``%s''\n", optarg);
 					usage(argv[0]);
@@ -96,7 +94,7 @@ int main(int argc, char **argv) {
 				break;
 
 			case 'b':
-				if((bi = str_to_bi(optarg)) == -1) {
+				if ((bi = str_to_bi(optarg)) == -1) {
 					fprintf(stderr, "error: bad band "
 					   "indicator: ``%s''\n", optarg);
 					usage(argv[0]);
@@ -106,11 +104,11 @@ int main(int argc, char **argv) {
 			case 'R':
 				errno = 0;
 				subdev = strtoul(optarg, &endptr, 0);
-				if((!errno) && (endptr != optarg))
+				if ((!errno) && (endptr != optarg))
 					break;
-				if(tolower(*optarg) == 'a') {
+				if (tolower(*optarg) == 'a') {
 					subdev = 0;
-				} else if(tolower(*optarg) == 'b') {
+				} else if (tolower(*optarg) == 'b') {
 					subdev = 1;
 				} else {
 					fprintf(stderr, "error: bad side: "
@@ -121,9 +119,9 @@ int main(int argc, char **argv) {
 				break;
 
 			case 'A':
-				if(!strcmp(optarg, "RX2")) {
+				if (!strcmp(optarg, "RX2")) {
 					antenna = 1;
-				} else if(!strcmp(optarg, "TX/RX")) {
+				} else if (!strcmp(optarg, "TX/RX")) {
 					antenna = 0;
 				} else {
 					errno = 0;
@@ -171,30 +169,30 @@ int main(int argc, char **argv) {
 	}
 
 	// sanity check frequency / channel
-	if(bts_scan) {
-		if(bi == BI_NOT_DEFINED) {
+	if (bts_scan) {
+		if (bi == BI_NOT_DEFINED) {
 			fprintf(stderr, "error: scaning requires band\n");
 			usage(argv[0]);
 		}
 	} else {
-		if(freq < 0.0) {
+		if (freq < 0.0) {
 			if(chan < 0) {
 				fprintf(stderr, "error: must enter channel or "
 				   "frequency\n");
 				usage(argv[0]);
 			}
-			if((freq = arfcn_to_freq(chan, &bi)) < 869e6)
+			if ((freq = arfcn_to_freq(chan, &bi)) < 869e6)
 				usage(argv[0]);
 		} else {
 			chan = freq_to_arfcn(freq, &bi);
 		}
-		if((freq < 869e6) || (2e9 < freq)) {
+		if ((freq < 869e6) || (2e9 < freq)) {
 			fprintf(stderr, "error: bad frequency: %lf\n", freq);
 			usage(argv[0]);
 		}
 	}
 
-	if(g_debug) {
+	if (g_debug) {
 #ifdef D_HOST_OSX
 		printf("debug: Mac OS X version\n");
 #endif
@@ -206,31 +204,31 @@ int main(int argc, char **argv) {
 	}
 
 	u = new usrp_source(decimation, fpga_master_clock_freq);
-	if(!u) {
+	if (!u) {
 		fprintf(stderr, "error: usrp_source\n");
 		return -1;
 	}
-	if(u->open(subdev) == -1) {
+	if (u->open(subdev) == -1) {
 		fprintf(stderr, "error: usrp_source::open\n");
 		return -1;
 	}
 
 	if (gain != 0) {
-		if(!u->set_gain(gain)) {
+		if (!u->set_gain(gain)) {
 			fprintf(stderr, "error: usrp_source::set_gain\n");
 			return -1;
 		}
 	}
 
 	if (ppm_error != 0) {
-		if(u->set_freq_correction(ppm_error) < 0) {
+		if (u->set_freq_correction(ppm_error) < 0) {
 			fprintf(stderr, "error: usrp_source::set_freq_correction\n");
 			return -1;
 		}
 	}
 
-	if(!bts_scan) {
-		if(!u->tune(freq+hz_adjust)) {
+	if (!bts_scan) {
+		if (!u->tune(freq+hz_adjust)) {
 			fprintf(stderr, "error: usrp_source::tune\n");
 			return -1;
 		}
@@ -249,6 +247,6 @@ int main(int argc, char **argv) {
 
 	fprintf(stderr, "%s: Scanning for %s base stations.\n",
 	   	basename(argv[0]), bi_to_str(bi));
-	double Freq, Power;
-	return c0_detect(u, bi, &Freq, &Power);
+
+	return c0_detect(u, bi, &chan);
 }

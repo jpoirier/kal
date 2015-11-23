@@ -16,7 +16,8 @@ libgokal:
 	go build -v -o kal.a kal.go
 
 install:
-	sudo cp libkal.so /usr/local/lib
+	sudo cp -f libkal.so /usr/local/lib
+	sudo ldconfig
 
 clean:
 	rm -f *~ *.o src/*.o kal libkal.so kal.a

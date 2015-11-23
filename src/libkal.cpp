@@ -37,45 +37,45 @@ int kal(rtlsdr_dev_t *dev, int *ppm, int arfcn) {
 		return -2;
 
 	int err;
-	int hz_adjust = 0;
+	int chan = 0;
 	unsigned int const decimation = 192;
 	long int const fpga_master_clock_freq = 52000000;
-	double freq = 0.0;
-	double power = 0.0;
+	double freq = -1.0;
 
-	// TODO: save the devices current settings
 	usrp_source *u = new usrp_source(dev, decimation, fpga_master_clock_freq);
-	if(!u) {
+	if (!u) {
 		fprintf(stderr, "error: usrp_source\n");
 		return -3;
 	}
 
 	uint32_t freq_saved = u->get_center_freq();
 
-	err = c0_detect(u, arfcn, &freq, &power);
-	if (err != 0 && freq == 0.0)
+	err = c0_detect(u, arfcn, &chan);
+	if (err != 0 ) {
+		fprintf(stderr, "error: c0_detect\n");
 		return -4;
+	}
 
-	if((freq < 869e6) || (2e9 < freq)) {
-		fprintf(stderr, "error: bad frequency: %lf\n", freq);
+	freq = arfcn_to_freq(chan, &arfcn);
+	if ((freq < 869e6) || (2e9 < freq)) {
+		fprintf(stderr, "error: arfcn_to_freq\n");
 		return -5;
 	}
 
-	if(!u->tune(freq+hz_adjust)) {
-		fprintf(stderr, "error: usrp_source::tune\n");
+	if(!u->tune(freq)) {
+		fprintf(stderr, "error: tune\n");
 		return -6;
 	}
 
 	double tuner_error = u->m_center_freq - freq;
-	err = offset_detect(u, ppm, hz_adjust, tuner_error);
+	err = offset_detect(u, ppm, 0, tuner_error);
 	if (err != 0) {
 		fprintf(stderr, "error: offset_detect\n");
 		return -7;
 	}
 
-	err = u->set_freq_correction(*ppm);
-	if (err != 0) {
-		fprintf(stderr, "error: set freq correction\n");
+	if(u->set_freq_correction(*ppm) < 0) {
+		fprintf(stderr, "error: set_freq_correction\n");
 		return -8;
 	}
 
@@ -86,59 +86,4 @@ int kal(rtlsdr_dev_t *dev, int *ppm, int arfcn) {
 	}
 
 	return 0;
-}
-
-#define ARFCN_CNT (6)
-static int const freqs[ARFCN_CNT] = {GSM_850, GSM_900, GSM_R_900, GSM_E_900, DCS_1800, PCS_1900};
-
-void kal_world(void) {
-	int i;
-	int cnt;
-	int err;
-	int hz_adjust = 0;
-	unsigned int const decimation = 192;
-	long int const fpga_master_clock_freq = 52000000;
-	double freq = 0.0;
-	double power = 0.0;
-
-	cnt = rtlsdr_get_device_count();
-	for (i = 0; i < cnt; i++) {
-		usrp_source *u = new usrp_source(decimation, fpga_master_clock_freq);
-
-		if(!u) {
-			fprintf(stderr, "error: usrp_source\n");
-			continue;
-		}
-		if(u->open(i) == -1) {
-			fprintf(stderr, "error: usrp_source::open\n");
-			continue;
-		}
-
-		for (int i = 0; i < ARFCN_CNT; i++) {
-			err = c0_detect(u, freqs[i], &freq, &power);
-			if (err != 0 && freq == 0.0)
-				continue;
-			break;
-		}
-
-		if((freq < 869e6) || (2e9 < freq)) {
-			fprintf(stderr, "error: bad frequency: %lf\n", freq);
-			continue;
-		}
-
-		if(!u->tune(freq+hz_adjust)) {
-			fprintf(stderr, "error: usrp_source::tune\n");
-			continue;
-		}
-
-		int tuner_error = u->m_center_freq - freq;
-		int ppm;
-		err = offset_detect(u, &ppm, hz_adjust, tuner_error);
-		if (err != 0)
-			fprintf(stderr, "error: offset_detect\n");
-
-		err = u->set_freq_correction(ppm);
-		if (err != 0)
-			fprintf(stderr, "error: set freq correction\n");
-	}
 }

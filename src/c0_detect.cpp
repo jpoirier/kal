@@ -58,16 +58,14 @@ static double vectornorm2(const complex *v, const unsigned int len) {
 }
 
 
-int c0_detect(usrp_source *u, int bi, double *Freq, double *Power) {
+int c0_detect(usrp_source *u, int bi, int *chan) {
 	int i, chan_count;
 	unsigned int overruns, b_len, frames_len, notfound_count, r;
 	float offset, spower[BUFSIZ];
 	double freq, sps, n, power[BUFSIZ], a;
 	complex *b;
 	circular_buffer *ub;
-
-	*Freq = 0.0;
-	*Power = 0.0;
+	double Power = 0.0;
 
 	fcch_detector *l = new fcch_detector(u->sample_rate());
 
@@ -160,13 +158,11 @@ int c0_detect(usrp_source *u, int bi, double *Freq, double *Power) {
 			printf("\tchan: %d (%.1fMHz ", i, freq/1e6);
 			display_freq(offset - GSM_RATE / 4);
 			printf(")\tpower: %6.2lf\n", power[i]);
+			if (power[i] > Power) {
+				*chan = i;
+			}
 			notfound_count = 0;
 			i = next_chan(i, bi);
-
-			if (Power != NULL && Freq != NULL && power[i] > *Power) {
-				*Power = power[i];
-				*Freq = freq;
-			}
 		} else {
 			// not found
 			notfound_count += 1;
