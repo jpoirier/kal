@@ -82,11 +82,11 @@ usrp_source::usrp_source(rtlsdr_dev_t *dev, float sample_rate, long int fpga_mas
 	m_cb = new circular_buffer(CB_LEN, sizeof(complex), 0);
 	m_freq_corr = 0;
 	m_close = false;
+	uint32_t samp_rate = 270833;
+
+	m_sample_rate = 270833.002142;
 
 	pthread_mutex_init(&m_u_mutex, 0);
-
-	uint32_t samp_rate = 270833;
-	m_sample_rate = 270833.002142;
 
 	// TODO: call rtlsdr_get_usb_strings and print out info
 
@@ -111,6 +111,9 @@ usrp_source::usrp_source(rtlsdr_dev_t *dev, unsigned int decimation, long int fp
 	m_cb = new circular_buffer(CB_LEN, sizeof(complex), 0);
 	m_freq_corr = 0;
 	m_close = false;
+	uint32_t samp_rate = 270833;
+
+	m_sample_rate = 270833.002142;
 
 	pthread_mutex_init(&m_u_mutex, 0);
 
@@ -119,6 +122,14 @@ usrp_source::usrp_source(rtlsdr_dev_t *dev, unsigned int decimation, long int fp
 		m_decimation = 4;
 	if(m_decimation > 256)
 		m_decimation = 256;
+
+	/* Set the sample rate */
+	if (rtlsdr_set_sample_rate(m_dev, samp_rate) < 0)
+		fprintf(stderr, "WARNING: Failed to set sample rate.\n");
+
+	/* Reset endpoint before we start reading from it (mandatory) */
+	if (rtlsdr_reset_buffer(m_dev) < 0)
+		fprintf(stderr, "WARNING: Failed to reset buffers.\n");
 }
 
 usrp_source::~usrp_source() {
