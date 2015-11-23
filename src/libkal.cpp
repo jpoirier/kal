@@ -73,7 +73,7 @@ int kal(rtlsdr_dev_t *dev, double *ppm, int arfcn) {
 		return -7;
 	}
 
-	rtlsdr_set_freq_correction(dev, ppm);
+	rtlsdr_set_freq_correction(dev, (int)(*ppm));
 	rtlsdr_set_center_freq(dev, freq_saved);
 
 	return 0;
@@ -127,5 +127,6 @@ void kal_world(void) {
 		err = offset_detect(u, &ppm, hz_adjust, tuner_error);
 		if (err != 0)
 			fprintf(stderr, "error: offset_detect\n");
+		rtlsdr_set_freq_correction(dev, (int)ppm);
 	}
 }
