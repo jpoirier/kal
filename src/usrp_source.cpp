@@ -24,8 +24,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #ifndef _WIN32
@@ -146,15 +144,15 @@ float usrp_source::sample_rate() {
 	return m_sample_rate;
 }
 
-int usrp_source::tune(double freq) {
+int usrp_source::tune(uint32_t freq) {
 	int r = 0;
 
 	pthread_mutex_lock(&m_u_mutex);
 	if (freq != m_center_freq) {
-		r = rtlsdr_set_center_freq(m_dev, (uint32_t)freq);
+		r = rtlsdr_set_center_freq(m_dev, freq);
 
 		if (r < 0)
-			fprintf(stderr, "Tuning to %u Hz failed!\n", (uint32_t)freq);
+			fprintf(stderr, "Tuning to %u Hz failed!\n", freq);
 		else
 			m_center_freq = rtlsdr_get_center_freq(m_dev);
 	}
@@ -162,6 +160,14 @@ int usrp_source::tune(double freq) {
 	pthread_mutex_unlock(&m_u_mutex);
 
 	return 1; //(r < 0) ? 0 : 1;
+}
+
+uint32_t usrp_source::get_center_freq() {
+	return rtlsdr_get_center_freq(m_dev);
+}
+
+int usrp_source::set_center_freq(uint32_t freq) {
+	return rtlsdr_set_center_freq(m_dev, freq);
 }
 
 int usrp_source::set_freq_correction(int ppm) {

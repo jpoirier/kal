@@ -27,6 +27,6 @@
 #ifndef _OFFSET_
 #define _OFFSET_
 
-extern int offset_detect(usrp_source *u, double *ppm, int hz_adjust, float tuner_error);
+extern int offset_detect(usrp_source *u, int *ppm, int hz_adjust, int tuner_error);
 
 #endif

@@ -23,12 +23,13 @@ package kal
 #include "libkal.h"
 */
 import "C"
-import "errors"
+import (
+	"errors"
+	"unsafe"
+)
 
 // Current version.
 var PackageVersion = "v0.1"
-
-type ARFCN int
 
 const (
 	GSM850  = C.GSM_850
@@ -40,7 +41,8 @@ const (
 )
 
 const (
-	errNoDevice = iota * -1
+	success = iota * -1
+	errNoDevice
 	errARFCN
 	errUSRPSource
 	errC0detect
@@ -77,9 +79,10 @@ func getError(errno int) error {
 	return errors.New("unknown error")
 }
 
-func Kal(dev *Context, arfcn ARFCN) (ppm double, err error) {
-	err = C.kal((*C.rtlsdr_dev_t)(dev), (*C.double)(&ppm), C.int(arfcn))
-	return getError[err]
+func Kal(dev *Context, arfcn int) (ppm int, err error) {
+	i := C.kal((*C.rtlsdr_dev_t)(dev), (*C.int)(unsafe.Pointer(&ppm)), C.int(arfcn))
+	err = getError(int(i))
+	return
 }
 
 func KalWorld() {

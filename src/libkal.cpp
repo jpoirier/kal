@@ -30,7 +30,7 @@
 #include "arfcn_enums.h"
 
 
-int kal(rtlsdr_dev_t *dev, double *ppm, int arfcn) {
+int kal(rtlsdr_dev_t *dev, int *ppm, int arfcn) {
 	if (!dev)
 		return -1;
 	if (arfcn < GSM_850 || arfcn > PCS_1900)
@@ -50,7 +50,7 @@ int kal(rtlsdr_dev_t *dev, double *ppm, int arfcn) {
 		return -3;
 	}
 
-	double freq_saved = rtlsdr_get_center_freq(dev);
+	uint32_t freq_saved = u->get_center_freq();
 
 	err = c0_detect(u, arfcn, &freq, &power);
 	if (err != 0 && freq == 0.0)
@@ -73,13 +73,13 @@ int kal(rtlsdr_dev_t *dev, double *ppm, int arfcn) {
 		return -7;
 	}
 
-	err = rtlsdr_set_freq_correction(dev, (int)(*ppm));
+	err = u->set_freq_correction(*ppm);
 	if (err != 0) {
 		fprintf(stderr, "error: set freq correction\n");
 		return -8;
 	}
 
-	err = rtlsdr_set_center_freq(dev, freq_saved);
+	err = u->set_center_freq(freq_saved);
 	if (err != 0) {
 		fprintf(stderr, "error: set center freq\n");
 		return -9;
@@ -131,15 +131,14 @@ void kal_world(void) {
 			continue;
 		}
 
-		double tuner_error = u->m_center_freq - freq;
-		double ppm;
+		int tuner_error = u->m_center_freq - freq;
+		int ppm;
 		err = offset_detect(u, &ppm, hz_adjust, tuner_error);
 		if (err != 0)
 			fprintf(stderr, "error: offset_detect\n");
 
-		rtlsdr_set_freq_correction(dev, (int)ppm);
-		if (err != 0) {
+		err = u->set_freq_correction(ppm);
+		if (err != 0)
 			fprintf(stderr, "error: set freq correction\n");
-		}
 	}
 }

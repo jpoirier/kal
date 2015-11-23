@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 typedef struct rtlsdr_dev rtlsdr_dev_t;
-int kal(rtlsdr_dev_t *dev, int arfcn);
+int kal(rtlsdr_dev_t *dev, int *ppm, int arfcn);
 void kal_world(void);
 
 #ifdef __cplusplus

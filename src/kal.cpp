@@ -243,7 +243,7 @@ int main(int argc, char **argv) {
 		   bi_to_str(bi), chan, freq / 1e6);
 		fprintf(stderr, "Tuned to %.6fMHz (reported tuner error: %.0fHz)\n",
 		   u->m_center_freq / 1e6, tuner_error);
-		double ppm;
+		int ppm;
 		return offset_detect(u, &ppm, hz_adjust, tuner_error);
 	}
 

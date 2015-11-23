@@ -27,6 +27,7 @@
 #ifndef _USRP_SOURCE_H
 #define _USRP_SOURCE_H
 
+#include <cstdint>
 #include <rtl-sdr.h>
 
 #include "usrp_complex.h"
@@ -44,8 +45,10 @@ public:
 	int open(unsigned int subdev);
 	int read(complex *buf, unsigned int num_samples, unsigned int *samples_read);
 	int fill(unsigned int num_samples, unsigned int *overrun);
-	int tune(double freq);
+	int tune(uint32_t freq);
 	int set_freq_correction(int ppm);
+	uint32_t get_center_freq();
+	int set_center_freq(uint32_t);
 	bool set_gain(float gain);
 	void start();
 	void stop();
@@ -54,8 +57,8 @@ public:
 
 	float sample_rate();
 
-	double	m_center_freq;
-	int		m_freq_corr;
+	uint32_t	m_center_freq;
+	int			m_freq_corr;
 
 private:
 	bool				m_close;

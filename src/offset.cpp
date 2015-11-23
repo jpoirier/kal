@@ -42,13 +42,13 @@ static const float		OFFSET_MAX	= 40e3;
 extern int g_verbosity;
 
 
-int offset_detect(usrp_source *u, double *ppm, int hz_adjust, float tuner_error) {
+int offset_detect(usrp_source *u, int *ppm, int hz_adjust, int tuner_error) {
 	unsigned int new_overruns = 0, overruns = 0;
 	int notfound = 0;
 	unsigned int s_len, b_len, consumed, count;
 	float offset = 0.0, min = 0.0, max = 0.0, avg_offset = 0.0,
 	   stddev = 0.0, sps, offsets[AVG_COUNT];
-	double total_ppm;
+	int total_ppm;
 	complex *cbuf;
 	fcch_detector *l;
 	circular_buffer *cb;
@@ -122,6 +122,6 @@ int offset_detect(usrp_source *u, double *ppm, int hz_adjust, float tuner_error)
 
 	total_ppm = u->m_freq_corr - ((avg_offset + hz_adjust) / u->m_center_freq) * 1000000;
 	*ppm = total_ppm;
-	printf("average absolute error: %.3f ppm\n", total_ppm);
+	printf("average absolute error: %d ppm\n", total_ppm);
 	return 0;
 }
