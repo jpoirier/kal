@@ -29,8 +29,8 @@
 
 extern const char *bi_to_str(int bi);
 extern int str_to_bi(char *s);
-extern double arfcn_to_freq(int n, int *bi);
-extern int freq_to_arfcn(double freq, int *bi);
+extern double arfcn_to_freq(int n, int *bi = 0);
+extern int freq_to_arfcn(double freq, int *bi = 0);
 extern int first_chan(int bi);
 extern int next_chan(int chan, int bi);
 

@@ -249,6 +249,6 @@ int main(int argc, char **argv) {
 
 	fprintf(stderr, "%s: Scanning for %s base stations.\n",
 	   	basename(argv[0]), bi_to_str(bi));
-
-	return c0_detect(u, bi, NULL, NULL);
+	double Freq, Power;
+	return c0_detect(u, bi, &Freq, &Power);
 }

@@ -40,8 +40,8 @@
  * apply.  However, the algorithm itself may be patented and any use of this
  * code should take that into consideration.
  */
-#ifndef _FCCH_DETECTOR_
-#define _FCCH_DETECTOR_
+#ifndef _FCCH_DETECTOR_H
+#define _FCCH_DETECTOR_H
 
 #include <fftw3.h>
 
