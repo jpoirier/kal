@@ -47,19 +47,23 @@ const (
 	errBadFreq
 	errTune
 	errOffsetDetect
+	errSetFreqCorr
+	errSetCenterFreq
 	errOther = -99
 )
 
 var errMap = map[int]error{
-	success:         nil,
-	errNoDevice:     errors.New("no device"),
-	errARFCN:        errors.New("arfcn out of range [GSM_850-PCS_1900]"),
-	errUSRPSource:   errors.New("usrp_source"),
-	errC0detect:     errors.New("c0_detect returned error"),
-	errBadFreq:      errors.New("bad frequency"),
-	errTune:         errors.New("tuning error"),
-	errOffsetDetect: errors.New("offset_detect returned error"),
-	errOther:        errors.New("unknown error"),
+	success:          nil,
+	errNoDevice:      errors.New("no device"),
+	errARFCN:         errors.New("arfcn out of range [GSM_850-PCS_1900]"),
+	errUSRPSource:    errors.New("usrp_source"),
+	errC0detect:      errors.New("c0_detect error"),
+	errBadFreq:       errors.New("bad frequency"),
+	errTune:          errors.New("tuning error"),
+	errOffsetDetect:  errors.New("offset_detect error"),
+	errSetFreqCorr:   errors.New("set_freq_correction error"),
+	errSetCenterFreq: errors.New("set_center_freq error"),
+	errOther:         errors.New("unknown error"),
 }
 
 // Context is the opened device's context.
