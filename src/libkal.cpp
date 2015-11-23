@@ -60,8 +60,8 @@ int kal(rtlsdr_dev_t *dev, int *ppm, int arfcn) {
 	}
 
 	freq = arfcn_to_freq(chan, &arfcn);
-	fprintf(stdio, "tuning to channel: %d\n", chan);
-	fprintf(stdio, "tuning to arfcn freq: %f\n", freq);
+	fprintf(stderr, "tuning to channel: %d\n", chan);
+	fprintf(stderr, "tuning to arfcn freq: %f\n", freq);
 	if ((2e9 < freq) || (freq < 869e6)) {
 		fprintf(stderr, "error: arfcn_to_freq\n");
 		return -5;
