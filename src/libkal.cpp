@@ -33,7 +33,7 @@
 int kal(rtlsdr_dev_t *dev, int *ppm, int arfcn) {
 	if (!dev)
 		return -1;
-	if (arfcn < GSM_850 || arfcn > PCS_1900)
+	if ((PCS_1900 < arfcn) || (arfcn < GSM_850))
 		return -2;
 
 	int err;
@@ -42,14 +42,17 @@ int kal(rtlsdr_dev_t *dev, int *ppm, int arfcn) {
 	long int const fpga_master_clock_freq = 52000000;
 	double freq = -1.0;
 
+	// new sdr object
 	usrp_source *u = new usrp_source(dev, decimation, fpga_master_clock_freq);
 	if (!u) {
 		fprintf(stderr, "error: usrp_source\n");
 		return -3;
 	}
 
+	// save the currently tuned freq
 	uint32_t freq_saved = u->get_center_freq();
 
+	// channel detection for the arfcn
 	err = c0_detect(u, arfcn, &chan);
 	if (err != 0 ) {
 		fprintf(stderr, "error: c0_detect\n");
@@ -57,7 +60,9 @@ int kal(rtlsdr_dev_t *dev, int *ppm, int arfcn) {
 	}
 
 	freq = arfcn_to_freq(chan, &arfcn);
-	if ((freq < 869e6) || (2e9 < freq)) {
+	fprintf(stdio, "tuning to channel: %d\n", chan);
+	fprintf(stdio, "tuning to arfcn freq: %f\n", freq);
+	if ((2e9 < freq) || (freq < 869e6)) {
 		fprintf(stderr, "error: arfcn_to_freq\n");
 		return -5;
 	}
