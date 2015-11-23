@@ -66,7 +66,7 @@ int c0_detect(usrp_source *u, int bi, double *Freq, double *Power) {
 	complex *b;
 	circular_buffer *ub;
 
-    *Freq = 0.0;
+	*Freq = 0.0;
 	*Power = 0.0;
 
 	fcch_detector *l = new fcch_detector(u->sample_rate());
