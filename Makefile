@@ -4,7 +4,7 @@ LDLIBS+=$(shell pkg-config --libs librtlsdr) $(shell pkg-config --libs fftw3) -l
 CC=g++
 
 
-all: kal libkal libgokal
+all: kal libkal install libgokal
 
 kal: src/kal.cpp src/arfcn_freq.cpp src/c0_detect.cpp src/circular_buffer.cpp src/fcch_detector.cpp src/usrp_source.cpp src/offset.cpp src/util.cpp
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
@@ -14,6 +14,9 @@ libkal: src/libkal.cpp src/arfcn_freq.cpp src/c0_detect.cpp src/circular_buffer.
 
 libgokal:
 	go build -v -o kal.a kal.go
+
+install:
+	sudo cp libkal.so /usr/local/lib
 
 clean:
 	rm -f *~ *.o src/*.o kal libkal.so kal.a

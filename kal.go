@@ -14,7 +14,7 @@ package kal
 
 /*
 #cgo CFLAGS: -Isrc/
-#cgo linux LDFLAGS: -L. -lkal
+#cgo linux LDFLAGS: -lkal
 #cgo darwin LDFLAGS: -lkal
 #cgo windows LDFLAGS: -L. -lkal -LC:/WINDOWS/system32
 
