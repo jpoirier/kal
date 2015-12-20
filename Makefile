@@ -1,6 +1,6 @@
 # libfftw3 must be configured via> ./configure --enable-shared
-CFLAGS=-std=c++11 -O2 -g -Wall -W $(shell pkg-config --cflags librtlsdr) $(shell pkg-config --cflags fftw3)
-LDLIBS+=$(shell pkg-config --libs librtlsdr) $(shell pkg-config --libs fftw3) -lm -lrt
+CFLAGS=-std=c++11 -O2 -g -Wall -W
+LDLIBS+=-lrtlsdr -lfftw3 -lm -lrt
 CC=g++
 
 
